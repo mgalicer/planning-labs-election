@@ -98,6 +98,8 @@ const loadData = (url) => {
 
 const setFeatureStyles = (stateName, party, winMargin) => {
   let color;
+  // just adding this because Minnesota is WEIRD and have a different party name for democrats
+  if (party === 'Democratic-Farmer Labor') party = 'Democratic';
   if (party === 'Democratic') {
     color = '#0033cc';
   } else if (party === 'Republican') {
