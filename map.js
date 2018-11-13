@@ -19,6 +19,7 @@ function initMap() {
     center: { lat: 40, lng: -100 },
     zoom: 4.5,
     styles: mapStyle,
+    disableDefaultUI: true,
   });
 
   // set up the rules for how the map should be styled
