@@ -16,16 +16,17 @@ function initMap() {
 
   // load the map
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40, lng: -100},
+    center: { lat: 40, lng: -100 },
     zoom: 4.5,
-    styles: mapStyle
+    styles: mapStyle,
   });
 
-
+  // set up the rules for how the map should be styled
   map.data.setStyle(styleFeature);
 
   const selection = document.getElementById('election-year');
 
+  // listen for change in selection from election year menu
   google.maps.event.addDomListener(selection, 'change', () => {
     clearData();
     loadData(selection.options[selection.selectedIndex].value);
@@ -34,6 +35,7 @@ function initMap() {
   //load GeoJSON for state polygons
   map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/states.js', { idPropertyName: 'NAME' });
 
+  // make sure selected map option renders on page load
   google.maps.event.addListenerOnce(map.data, 'addfeature', () => {
       google.maps.event.trigger(document.getElementById('election-year'),
           'change');
@@ -41,6 +43,7 @@ function initMap() {
 }
 
 const styleFeature = (feature) => {
+  // don't show feature if color isn't set
   let showRow = true;
   if (feature.getProperty('color') == null) {
     showRow = false;
@@ -49,25 +52,26 @@ const styleFeature = (feature) => {
   return {
     strokeWeight: 0.5,
     strokeColor: '#fff',
-    fillColor: feature.getProperty('color') ,
+    fillColor: feature.getProperty('color'),
     fillOpacity: feature.getProperty('opacity'),
-    visible: showRow
+    visible: showRow,
   };
-}
+};
 
 const clearData = () => {
   map.data.forEach((row) => {
-    row.setProperty('winner', undefined);
+    row.setProperty('color', undefined);
   });
   // document.getElementById('data-box').style.display = 'none';
   // document.getElementById('data-caret').style.display = 'none';
-}
+};
 
 const loadData = (url) => {
+  // get JSON data
   fetch(url)
     .then(response => response.json())
     .then((myJSON) => {
-
+      // get state and candidate info from JSON
       for (const state of Object.keys(myJSON)) {
         let stateName;
         let totalVotes = 0;
@@ -77,38 +81,37 @@ const loadData = (url) => {
         for (const candidate of Object.keys(myJSON[state])) {
           stateName = myJSON[state][candidate]['state'];
 
-          let numVotes = myJSON[state][candidate]['votes'];
-
-          if(numVotes > winningVotes) {
+          const numVotes = myJSON[state][candidate]['votes'];
+          // keep track of who's the winner so far
+          if (numVotes > winningVotes) {
             winningCandidate = myJSON[state][candidate];
             winningVotes = numVotes;
           }
           totalVotes += numVotes;
         }
-
-        setFeatureStyles(stateName, winningCandidate['parties'][0], winningVotes/totalVotes);
-
+        // find feature id by state name and pass in properties to later be used by styles
+        setFeatureStyles(stateName, winningCandidate['parties'][0], winningVotes / totalVotes);
       }
-    })
+    });
 
-}
+};
 
 const setFeatureStyles = (stateName, party, winMargin) => {
   let color;
-  if(party === "Democratic") {
+  if (party === 'Democratic') {
     color = '#0033cc';
-  } else if(party == "Republican") {
+  } else if (party === 'Republican') {
     color = '#cc0000';
   } else {
     color = '#e6ccff';
   }
 
+  // update features in the map's data layer to be used by style function
   map.data
     .getFeatureById(stateName)
-    .setProperty('color', color)
+    .setProperty('color', color);
 
   map.data
     .getFeatureById(stateName)
     .setProperty('opacity', 1.3 - winMargin);
-
-}
+};
