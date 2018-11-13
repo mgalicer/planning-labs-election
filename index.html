@@ -16,7 +16,8 @@
     <button id="form-button">Add your state</button>
     <div id="user-modal" class="modal">
       <div class="modal-content">
-        <form>
+        <form id="new-candidate-data">
+          <div><h3>Add your state's data</h3></div>
           <div>
             <label for="state">State:</label>
             <input type="text" id="state" name="candidate-state">
@@ -36,11 +37,13 @@
       </div>
 
     </div>
-    <!-- enter a state, candidate name, and vote total -->
 
     <div id="map"></div>
+    <pre class="debug"></pre>
 
     <script type="text/javascript" src="map.js"></script>
+    <script type="text/javascript" src="modal.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_ikZSJbtddbpoZWefxZ_OuxjOmFaoxdg&callback=initMap">
     </script>
