@@ -4,8 +4,8 @@ html, body, #map {
   padding: 0;
   overflow: hidden;
   position: relative;
+  font-family: Arial, sans-serif;
 }
-
 
 #controls {
   position: absolute;
@@ -14,10 +14,43 @@ html, body, #map {
   z-index: 2;
 }
 
+form div {
+  margin-top: 15px;
+}
+
+label {
+  display: inline-block;
+  width: 90px;
+  text-align: right;
+}
+
+form .button {
+  padding-left: 90px;
+}
+
 #form-button {
   position: absolute;
   top:50px;
   left: 10px;
-  z-index: 10;
+  z-index: 2;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    z-index: 3;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 50px;
+  width: 30%;
 }
 
