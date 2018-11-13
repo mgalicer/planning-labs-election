@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="map.css">
+  <title>Presidential Elections</title>
+  <link type="text/css" rel="stylesheet" href="map.css">
 </head>
 <body>
-    <div id="controls" class="nicebox">
-      <div>
+    <div id="controls">
       <select id="election-year">
         <option value="https://raw.githubusercontent.com/TimeMagazine/presidential-election-results/master/data/results_2004.json">2004 Presidential Election</option>
         <option value="https://raw.githubusercontent.com/TimeMagazine/presidential-election-results/master/data/results_2008.json">2008 Presidential Election</option>
         <option value="https://raw.githubusercontent.com/TimeMagazine/presidential-election-results/master/data/results_2012.json">2012 Presidential Election</option>
       </select>
+    </div>
+
+    <button id="form-button">Add your state</button>
+    <div id="user-modal" class="modal">
+      <div class="modal-content">
+        <form>
+          <div>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="candidate-state">
+          </div>
+          <div>
+            <label for="name">Candidate name:</label>
+            <input type="text" id="name" name="candidate-name">
+          </div>
+          <div>
+            <label for="vote-total">Vote total:</label>
+            <input type="text" id="vote-total" name="candidate-vote-total">
+          </div>
+          <div class="button">
+            <button type="submit">Send your message</button>
+          </div>
+        </form>
       </div>
+
     </div>
-    <div id="data-box" class="nicebox">
-      <label id="data-label" for="data-value"></label>
-      <span id="data-value"></span>
-    </div>
+    <!-- enter a state, candidate name, and vote total -->
 
     <div id="map"></div>
 
