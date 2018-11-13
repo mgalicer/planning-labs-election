@@ -4,6 +4,20 @@
   <link rel="stylesheet" href="map.css">
 </head>
 <body>
+    <div id="controls" class="nicebox">
+      <div>
+      <select id="election-year">
+        <option value="https://raw.githubusercontent.com/TimeMagazine/presidential-election-results/master/data/results_2004.json">2004 Presidential Election</option>
+        <option value="https://raw.githubusercontent.com/TimeMagazine/presidential-election-results/master/data/results_2008.json">2008 Presidential Election</option>
+        <option value="https://raw.githubusercontent.com/TimeMagazine/presidential-election-results/master/data/results_2012.json">2012 Presidential Election</option>
+      </select>
+      </div>
+    </div>
+    <div id="data-box" class="nicebox">
+      <label id="data-label" for="data-value"></label>
+      <span id="data-value"></span>
+    </div>
+
     <div id="map"></div>
 
     <script type="text/javascript" src="map.js"></script>
