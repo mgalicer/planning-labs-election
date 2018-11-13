@@ -22,6 +22,8 @@ function initMap() {
   });
 
 
+  map.data.setStyle(styleFeature);
+
   const selection = document.getElementById('election-year');
 
   google.maps.event.addDomListener(selection, 'change', () => {
@@ -31,10 +33,15 @@ function initMap() {
 
   //load GeoJSON for state polygons
   map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/states.js', { idPropertyName: 'NAME' });
+
+  google.maps.event.addListenerOnce(map.data, 'addfeature', () => {
+      google.maps.event.trigger(document.getElementById('election-year'),
+          'change');
+    });
 }
 
 const styleFeature = (feature) => {
-  var showRow = true;
+  let showRow = true;
   if (feature.getProperty('color') == null) {
     showRow = false;
   }
@@ -43,7 +50,7 @@ const styleFeature = (feature) => {
     strokeWeight: 0.5,
     strokeColor: '#fff',
     fillColor: feature.getProperty('color') ,
-    fillOpacity: 0.75,
+    fillOpacity: feature.getProperty('opacity'),
     visible: showRow
   };
 }
@@ -69,6 +76,7 @@ const loadData = (url) => {
 
         for (const candidate of Object.keys(myJSON[state])) {
           stateName = myJSON[state][candidate]['state'];
+
           let numVotes = myJSON[state][candidate]['votes'];
 
           if(numVotes > winningVotes) {
@@ -78,17 +86,29 @@ const loadData = (url) => {
           totalVotes += numVotes;
         }
 
-        let color = '#ff0000';
-        if(winningCandidate['parties'][0] === 'Democratic') color = '#0000ff';
-
-        map.data
-            .getFeatureById(stateName)
-            .setProperty('color', color);
+        setFeatureStyles(stateName, winningCandidate['parties'][0], winningVotes/totalVotes);
 
       }
     })
 
-    .then( () => map.data.setStyle(styleFeature))
-
 }
 
+const setFeatureStyles = (stateName, party, winMargin) => {
+  let color;
+  if(party === "Democratic") {
+    color = '#0033cc';
+  } else if(party == "Republican") {
+    color = '#cc0000';
+  } else {
+    color = '#e6ccff';
+  }
+
+  map.data
+    .getFeatureById(stateName)
+    .setProperty('color', color)
+
+  map.data
+    .getFeatureById(stateName)
+    .setProperty('opacity', 1.3 - winMargin);
+
+}
