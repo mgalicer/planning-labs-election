@@ -17,6 +17,7 @@ window.onclick = (event) => {
 const myForm = document.getElementById('new-candidate-data');
 
 myForm.addEventListener('submit', (event) => {
+    modal.style.display = 'none';
     event.preventDefault();
     const object = {};
 
