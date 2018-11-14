@@ -52,11 +52,16 @@ const styleFeature = (feature) => {
     showRow = false;
   }
 
+  let outlineWeight = 0.5;
+  if (feature.getProperty('state') === 'hover') {
+    outlineWeight = 2;
+  }
+
   return {
-    strokeWeight: 0.5,
+    strokeWeight: outlineWeight,
     strokeColor: '#fff',
     fillColor: feature.getProperty('color'),
-    fillOpacity: 1.3 - feature.getProperty('opacity'),
+    fillOpacity: 1.3 - feature.getProperty('win-margin'),
     visible: showRow,
   };
 };
@@ -118,7 +123,7 @@ const setFeatureStyles = (stateName, winningCandidate, winMargin) => {
 
   map.data
     .getFeatureById(stateName)
-    .setProperty('opacity', winMargin);
+    .setProperty('win-margin', winMargin);
 
   map.data
     .getFeatureById(stateName)
@@ -128,12 +133,14 @@ const setFeatureStyles = (stateName, winningCandidate, winMargin) => {
 
 const mouseIn = (e) => {
   e.feature.setProperty('state', 'hover');
-  console.log(e.feature.getProperty('winning-candidate'))
-  document.getElementById('data-label').textContent =
-       e.feature.getProperty('winning-candidate')['parties'][0] + ' Party;
-  //  document.getElementById('data-value').textContent =
-  //      e.feature.getProperty('census_variable').toLocaleString();
+  const candidateName = e.feature.getProperty('winning-candidate').name.split(',');
+
+  document.getElementById('state-name').textContent = `${e.feature.getProperty('NAME')}`;
+  document.getElementById('winning-candidate').textContent = `${candidateName[1]} ${candidateName[0]}`;
+  document.getElementById('winning-party').textContent =
+       `${e.feature.getProperty('winning-candidate')['parties'][0]} Party`;
    document.getElementById('data-box').style.display = 'block';
+  document.getElementById('winning-margin').textContent = `${Math.round(e.feature.getProperty('win-margin') * 100)}%`
 }
 
 const mouseOut = (e) => {
