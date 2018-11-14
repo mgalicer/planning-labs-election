@@ -24,9 +24,15 @@ function initMap() {
 
   // set up the rules for how the map should be styled
   map.data.setStyle(styleFeature);
-  map.data.addListener('mouseover', mouseIn);
-  map.data.addListener('mouseout', mouseOut);
 
+  addEventListeners();
+
+  //load GeoJSON for state polygons
+  map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/states.js', { idPropertyName: 'NAME' });
+
+};
+
+const addEventListeners = () => {
   const selection = document.getElementById('election-year');
 
   // listen for change in selection from election year menu
@@ -35,23 +41,17 @@ function initMap() {
     loadData(selection.options[selection.selectedIndex].value);
   });
 
-  //load GeoJSON for state polygons
-  map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/states.js', { idPropertyName: 'NAME' });
-
   // make sure selected map option renders on page load
   google.maps.event.addListenerOnce(map.data, 'addfeature', () => {
       google.maps.event.trigger(document.getElementById('election-year'),
           'change');
-    });
+  });
+
+  map.data.addListener('mouseover', mouseIn);
+  map.data.addListener('mouseout', mouseOut);
 }
 
 const styleFeature = (feature) => {
-  // don't show feature if color isn't set
-  let showRow = true;
-  if (feature.getProperty('color') == null) {
-    showRow = false;
-  }
-
   let outlineWeight = 0.5;
   if (feature.getProperty('state') === 'hover') {
     outlineWeight = 2;
@@ -61,8 +61,7 @@ const styleFeature = (feature) => {
     strokeWeight: outlineWeight,
     strokeColor: '#fff',
     fillColor: feature.getProperty('color'),
-    fillOpacity: 1.3 - feature.getProperty('win-margin'),
-    visible: showRow,
+    fillOpacity: 0.2 + feature.getProperty('win-margin'),
   };
 };
 
@@ -133,13 +132,15 @@ const setFeatureStyles = (stateName, winningCandidate, winMargin) => {
 
 const mouseIn = (e) => {
   e.feature.setProperty('state', 'hover');
+  // get candidate name
   const candidateName = e.feature.getProperty('winning-candidate').name.split(',');
 
+  // assign state-specific data to the elements they will be displayed in
   document.getElementById('state-name').textContent = `${e.feature.getProperty('NAME')}`;
   document.getElementById('winning-candidate').textContent = `${candidateName[1]} ${candidateName[0]}`;
   document.getElementById('winning-party').textContent =
        `${e.feature.getProperty('winning-candidate')['parties'][0]} Party`;
-   document.getElementById('data-box').style.display = 'block';
+  document.getElementById('data-box').style.display = 'block';
   document.getElementById('winning-margin').textContent = `${Math.round(e.feature.getProperty('win-margin') * 100)}%`
 }
 
