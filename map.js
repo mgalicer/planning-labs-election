@@ -24,6 +24,8 @@ function initMap() {
 
   // set up the rules for how the map should be styled
   map.data.setStyle(styleFeature);
+  map.data.addListener('mouseover', mouseIn);
+  map.data.addListener('mouseout', mouseOut);
 
   const selection = document.getElementById('election-year');
 
@@ -54,7 +56,7 @@ const styleFeature = (feature) => {
     strokeWeight: 0.5,
     strokeColor: '#fff',
     fillColor: feature.getProperty('color'),
-    fillOpacity: feature.getProperty('opacity'),
+    fillOpacity: 1.3 - feature.getProperty('opacity'),
     visible: showRow,
   };
 };
@@ -63,8 +65,7 @@ const clearData = () => {
   map.data.forEach((row) => {
     row.setProperty('color', undefined);
   });
-  // document.getElementById('data-box').style.display = 'none';
-  // document.getElementById('data-caret').style.display = 'none';
+  document.getElementById('data-box').style.display = 'none';
 };
 
 const loadData = (url) => {
@@ -91,14 +92,15 @@ const loadData = (url) => {
           totalVotes += numVotes;
         }
         // find feature id by state name and pass in properties to later be used by styles
-        setFeatureStyles(stateName, winningCandidate['parties'][0], winningVotes / totalVotes);
+        setFeatureStyles(stateName, winningCandidate, winningVotes / totalVotes);
       }
     });
 
 };
 
-const setFeatureStyles = (stateName, party, winMargin) => {
+const setFeatureStyles = (stateName, winningCandidate, winMargin) => {
   let color;
+  let party = winningCandidate['parties'][0];
   // just adding this because Minnesota is WEIRD and have a different party name for democrats
   if (party === 'Democratic-Farmer Labor') party = 'Democratic';
   if (party === 'Democratic') {
@@ -116,5 +118,24 @@ const setFeatureStyles = (stateName, party, winMargin) => {
 
   map.data
     .getFeatureById(stateName)
-    .setProperty('opacity', 1.3 - winMargin);
+    .setProperty('opacity', winMargin);
+
+  map.data
+    .getFeatureById(stateName)
+    .setProperty('winning-candidate', winningCandidate);
+
 };
+
+const mouseIn = (e) => {
+  e.feature.setProperty('state', 'hover');
+  console.log(e.feature.getProperty('winning-candidate'))
+  document.getElementById('data-label').textContent =
+       e.feature.getProperty('winning-candidate')['parties'][0] + ' Party;
+  //  document.getElementById('data-value').textContent =
+  //      e.feature.getProperty('census_variable').toLocaleString();
+   document.getElementById('data-box').style.display = 'block';
+}
+
+const mouseOut = (e) => {
+  e.feature.setProperty('state', 'normal');
+}
